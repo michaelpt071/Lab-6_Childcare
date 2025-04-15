@@ -162,3 +162,4 @@ ggplot(aes(x = study_year, y = price, color = region)) +
 ```
 
 
+![Weekly Median Price for Center-Based Childcare($)](https://raw.githubusercontent.com/michaelpt071/Lab-6_Childcare/refs/heads/main/centerBasedChildcare_WeeklyMedianPrice.png)
