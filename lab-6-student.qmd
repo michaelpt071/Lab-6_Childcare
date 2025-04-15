@@ -5,7 +5,6 @@ date: today
 format: html
 editor: source
 execute: 
-  echo: true
   error: true
 code-fold: true
 toc: true
@@ -121,6 +120,9 @@ ca_childcare %>%
 
 ```{r}
 #| label: recreate-plot
+#| fig-width: 12
+#| fig-height: 4
+
 ca_childcare %>%
   select(study_year, mc_infant, mc_toddler, mc_preschool, region) %>% 
   pivot_longer(cols = 2:4, names_to ="care_type",
@@ -153,12 +155,3 @@ ggplot(aes(x = study_year, y = price, color = region)) +
        color = "California Reigon")+
   theme_bw()
 ```
-
-```{r}
-#ggsave("centerBasedChildcare_WeeklyMedianPrice.png",plot = last_plot(),scale = 1,width = 12,height = 4,units = c("in"))
-```
-
-
-![Weekly Median Price for Center-Based Childcare($)](centerBasedChildcare_WeeklyMedianPrice.png)
-
-
