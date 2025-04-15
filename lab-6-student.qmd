@@ -121,9 +121,6 @@ ca_childcare %>%
 
 ```{r}
 #| label: recreate-plot
-
-dev.new(width=12, height=4)
-
 ca_childcare %>%
   select(study_year, mc_infant, mc_toddler, mc_preschool, region) %>% 
   pivot_longer(cols = 2:4, names_to ="care_type",
@@ -162,4 +159,4 @@ ggplot(aes(x = study_year, y = price, color = region)) +
 ```
 
 
-![Weekly Median Price for Center-Based Childcare($)](https://raw.githubusercontent.com/michaelpt071/Lab-6_Childcare/refs/heads/main/centerBasedChildcare_WeeklyMedianPrice.png)
+![Weekly Median Price for Center-Based Childcare($)](centerBasedChildcare_WeeklyMedianPrice.png)
