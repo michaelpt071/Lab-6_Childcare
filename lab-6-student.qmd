@@ -106,13 +106,13 @@ ca_childcare %>%
 ca_childcare %>% 
   filter(study_year == 2018) %>% 
   group_by(study_year, region) %>% 
-  summarise(minimum = min(mfcc_infant)) %>% 
+  summarise(minimum = min(mc_infant)) %>% 
   ungroup() %>% 
   pivot_wider(names_from = study_year,
               values_from = minimum) %>% 
   mutate(across(where(is.factor), as.character)) %>% 
-  rename("mfcc_infant" = "2018") %>% 
-  arrange(desc(mfcc_infant)) %>% 
+  rename("mc_infant" = "2018") %>% 
+  arrange(desc(mc_infant)) %>% 
   slice_tail(n = 1)
 ```
 
@@ -122,6 +122,43 @@ ca_childcare %>%
 ```{r}
 #| label: recreate-plot
 
+dev.new(width=12, height=4)
+
+ca_childcare %>%
+  select(study_year, mc_infant, mc_toddler, mc_preschool, region) %>% 
+  pivot_longer(cols = 2:4, names_to ="care_type",
+values_to = "price") %>%
+  mutate(across(where(is.factor), as.character)) %>% 
+  mutate(study_year = ymd(study_year*10000+0101),) %>% 
+  mutate(region = factor(region, levels = c("SF Bay Area",
+                        "Orange County",
+                        "Los Angeles County",
+                        "Northern San Joaquin Valley",
+                        "Central Coast",
+                        "Inland Empire",
+                        "Superior California",
+                        "Southern San Joaquin Valley",
+                        "San Diego Imperial",
+                        "North Coast"))) %>%
+  mutate(care_type = case_when(
+    care_type == "mc_infant" ~ "Infant",
+    care_type == "mc_toddler" ~ "Toddler",
+    care_type == "mc_preschool" ~ "Preschool")) %>%
+
+ggplot(aes(x = study_year, y = price, color = region)) +
+  geom_smooth(method = "loess")+
+  geom_point(alpha = 0.2)+
+  ylim(100,500)+
+  facet_grid(cols = vars(care_type))+
+  labs(x = "Study Year",
+       y = "",
+       title = "Weekly Median Price for Center-Based Childcare($)",
+       color = "California Reigon")+
+  theme_bw()
+```
+
+```{r}
+#ggsave("centerBasedChildcare_WeeklyMedianPrice.png",plot = last_plot(),scale = 1,width = 12,height = 4,units = c("in"))
 ```
 
 
