@@ -87,7 +87,11 @@ ca_childcare %>%
   summarise(median = median(mhi_2018)) %>% 
   ungroup() %>% 
   pivot_wider(names_from = study_year,
-values_from = median)
+              values_from = median) %>% 
+  mutate(across(where(is.factor), as.character)) %>% 
+  rename("mhi_2018" = "2018",
+         "mhi_2008" = "2008") %>% 
+  arrange(desc(mhi_2018))
 ```
 
 
@@ -99,7 +103,17 @@ values_from = median)
 ```{r}
 #| label: lowest-median-weekly-price-2018
 
-
+ca_childcare %>% 
+  filter(study_year == 2018) %>% 
+  group_by(study_year, region) %>% 
+  summarise(minimum = min(mfcc_infant)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = study_year,
+              values_from = minimum) %>% 
+  mutate(across(where(is.factor), as.character)) %>% 
+  rename("mfcc_infant" = "2018") %>% 
+  arrange(desc(mfcc_infant)) %>% 
+  slice_tail(n = 1)
 ```
 
 **6. Recreate the plot (look at online instructions) that shows, for all ten regions, the change over time of the full-time median price for center-based childcare for infants, toddlers, and preschoolers. Recreate the plot. You do not have to replicate the exact colors or theme, but your plot should have the same content, including the order of the facets and legend, reader-friendly labels, axes breaks, and a  smooth function.**
