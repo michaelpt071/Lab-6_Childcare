@@ -35,6 +35,8 @@ counties <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytues
 
 **1. Briefly describe the dataset (~ 4 sentences). What information does it contain?**
 
+> This data is sourced from the National Database of Childcare Prices (NDCP). It contains data on childcare prices, distinguished by  provider type,child's age, and county characteristics. Data were collected from 2008 to 2018. The tidytuesday description also mentions that the dataset implies that "both parents" implies a man and a woman, but acknowledges that not every loving family is structured as such.
+
 ## California Childcare Costs
 
 Let's start by focusing only on California. 
@@ -45,7 +47,8 @@ Let's start by focusing only on California.
 
 ```{r}
 #| label: ca-childcare-costs
-
+ca_childcare <- full_join(childcare_costs, counties, by = "county_fips_code") %>% 
+  filter(state_name == "California")
 ```
 
 **3. Using a function from the `forcats` package, complete the code below to create a new variable where each county is categorized into one of the [10 Census regions](https://census.ca.gov/regions/) in California. Use the Region description (from the plot), not the Region number. An example region has been started for you.**  
@@ -57,9 +60,17 @@ Let's start by focusing only on California.
 
 ca_childcare <- ca_childcare |> 
   mutate(county_name = str_remove(county_name, " County")) |> 
-  mutate(region = fct_______(county_name,
-    'Superior California' = c("Butte", "Colusa", "El Dorado". ...),
-     ...
+  mutate(region = fct_collapse(county_name,
+    'Superior California' = c("Butte", "Colusa", "El Dorado", "Glenn", "Lassen", "Modoc", "Nevada", "Placer", "Plumas", "Sacramento", "Shasta", "Sierra", "Siskiyou", "Sutter", "Tehama", "Yolo", "Yuba"),
+    'North Coast' = c("Del Norte", "Humboldt", "Lake", "Mendocino", "Napa", "Sonoma", "Trinity"),
+    'SF Bay Area' = c("Alameda", "Contra Costa", "Marin", "San Francisco", "San Mateo", "Santa Clara", "Solano"),
+    'Northern San Joaquin Valley' = c("Alpine", "Amador", "Calaveras", "Madera", "Mariposa", "Merced", "Mono", "San Joaquin", "Stanislaus", "Tuolumne"),
+    'Central Coast' = c("Monterey", "San Benito", "San Luis Obispo", "Santa Barbara", "Santa Cruz", "Ventura"),
+    'Southern San Joaquin Valley' = c("Fresno", "Inyo", "Kern", "Kings", "Tulare"),
+    'Inland Empire' = c("Riverside", "San Bernardino"),
+    'Los Angeles County' = c("Los Angeles"),
+    'Orange County' = c("Orange"),
+    'San Diego Imperial' = c("Imperial", "San Diego")
     ))
 ```
 
@@ -70,8 +81,15 @@ ca_childcare <- ca_childcare |>
 #| label: median-income-by-region-over-time
 # Hint: You will want to calculate the median of median income before you make columns for 2008/2018 by transforming the data
 
-
+ca_childcare %>% 
+  filter(study_year == 2018 | study_year == 2008) %>% 
+  group_by(study_year, region) %>% 
+  summarise(median = median(mhi_2018)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = study_year,
+values_from = median)
 ```
+
 
 
 **5. Which California `region` had the lowest `median` full-time median weekly price for center-based childcare for infants in 2018? Does this `region` correspond to the `region` with the lowest `median` income in 2018 that you found in Q4?**  
