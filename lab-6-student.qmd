@@ -143,6 +143,9 @@ values_to = "price") %>%
     care_type == "mc_infant" ~ "Infant",
     care_type == "mc_toddler" ~ "Toddler",
     care_type == "mc_preschool" ~ "Preschool")) %>%
+  mutate(care_type = factor(care_type, levels = c("Infant",
+                                                  "Toddler",
+                                                  "Preschool"))) %>%
 
 ggplot(aes(x = study_year, y = price, color = region)) +
   geom_smooth(method = "loess")+
